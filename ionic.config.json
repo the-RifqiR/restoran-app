@@ -1,0 +1,7 @@
+{
+  "name": "RestoMobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}
