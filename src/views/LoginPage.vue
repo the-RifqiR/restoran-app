@@ -86,30 +86,47 @@ const handleLogin = async () => {
   }
 
   isLoading.value = true;
+  errorMessage.value = ''; // Reset error message tiap kali mencoba
+
   try {
     const response = await api.post('/login', form.value);
-    localStorage.setItem('access_token', response.data.access_token);
-    localStorage.setItem('user_role', response.data.user.role);
-    localStorage.setItem('user_data', JSON.stringify(response.data.user));
-const role = response.data.user.role;
-const toast = await toastController.create({
-  message: 'Selamat Datang!',
-  duration: 1500,
-  color: 'dark',
-  position: 'top'
-});
-await toast.present();
+    
+    // 1. Ambil data penting dari response
+    const { access_token, user } = response.data;
+    const role = user.role.toLowerCase().trim(); // Pastikan kecil dan tanpa spasi
 
-if (role === 'owner') {
-      router.replace('/owner/dashboard');
-    } else if(role === 'manager' ) {
-      router.replace('//manager/dashboard'); // Default untuk kasir
-    }else{
-      router.replace('/kasir');
+    // 2. Simpan ke Storage
+    localStorage.setItem('access_token', access_token);
+    localStorage.setItem('user_role', role);
+    localStorage.setItem('user_data', JSON.stringify(user));
+
+    // 3. Tampilkan Toast
+    const toast = await toastController.create({
+      message: `Selamat Datang, ${user.username}!`,
+      duration: 1500,
+      color: 'dark',
+      position: 'top'
+    });
+    await toast.present();
+
+    // 4. Logika Redirect yang lebih aman
+    console.log("Login sukses, role anda:", role); // Untuk debugging di console browser
+
+    if (role === 'owner') {
+      await router.replace('/owner/dashboard');
+    } else if (role === 'manager') {
+      await router.replace('/manager/dashboard'); // Perbaikan double slash
+    } else {
+      await router.replace('/kasir');
     }
     
   } catch (error: any) {
-    errorMessage.value = 'Username atau Password salah';
+    console.error("Login Error:", error);
+    if (error.response && error.response.status === 401) {
+      errorMessage.value = 'Username atau Password salah';
+    } else {
+      errorMessage.value = 'Gagal terhubung ke server';
+    }
   } finally {
     isLoading.value = false;
   }

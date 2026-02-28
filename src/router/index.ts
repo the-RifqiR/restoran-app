@@ -90,18 +90,23 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const isAuthenticated = localStorage.getItem('access_token');
   const userRole = localStorage.getItem('user_role');
-  
-  // Jika butuh auth tapi belum login
+
+  // 1. Cek Auth
   if (to.meta.requiresAuth && !isAuthenticated) {
     return next('/login');
-  } 
+  }
 
-  // Jika sudah login tapi mencoba akses halaman yang bukan rolenya
-  if (to.meta.role && to.meta.role !== userRole) {
-    // Kembalikan ke dashboard masing-masing jika nyasar
-    if (userRole === 'owner') return next('/owner/dashboard');
-    if (userRole === 'manager') return next('/manager/dashboard');
-    return next('/kasir');
+  // 2. Cek Role (Hanya jika route tersebut memiliki aturan role)
+  if (to.meta.role) {
+    if (to.meta.role !== userRole) {
+      // Cegah Redirect jika kita SUDAH berada di halaman tujuan (mencegah infinite loop)
+      const targetPath = userRole === 'owner' ? '/owner/dashboard' : 
+                         userRole === 'manager' ? '/manager/dashboard' : '/kasir';
+      
+      if (to.path !== targetPath) {
+        return next(targetPath);
+      }
+    }
   }
 
   next();
