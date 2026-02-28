@@ -50,9 +50,9 @@ import {
 } from '@ionic/vue';
 import {
   gridOutline, restaurantOutline, fastFoodOutline,
-  receiptOutline, logOutOutline, personCircleOutline,
+  receiptOutline, logOutOutline, personCircleOutline, 
   // 2. Tambahkan icon yang kurang di sini
-  pieChartOutline, barChartOutline
+  pieChartOutline, barChartOutline,peopleOutline,
 } from 'ionicons/icons';
 
 defineEmits(['logout']);
@@ -63,6 +63,7 @@ const userData = JSON.parse(localStorage.getItem('user_data') || '{}');
 const allPages = [
   { title: 'Dashboard Kasir', url: '/kasir', icon: gridOutline, roles: ['kasir'] },
   { title: 'Dashboard Owner', url: '/owner/dashboard', icon: pieChartOutline, roles: ['owner'] },
+  { title: 'Manajemen User', url: '/owner/user', icon: peopleOutline, roles: ['owner'] },
   { title: 'Dashboard Manager', url: '/manager/dashboard', icon: barChartOutline, roles: ['manager'] },
   { title: 'Status Meja', url: '/meja', icon: restaurantOutline, roles: ['kasir'] },
   { title: 'Manajemen Meja', url: '/manager/meja', icon: restaurantOutline, roles: ['manager'] },

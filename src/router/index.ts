@@ -75,6 +75,12 @@ const routes: Array<RouteRecordRaw> = [
   meta: { requiresAuth: true, role: 'manager' }
 },
 {
+    path: '/owner/user', // Tambahkan ini
+    name: 'UserManagement',
+    component: () => import('@/views/owner/UserManagement.vue'),
+    meta: { requiresAuth: true, role: 'owner' }
+  },
+{
   path: '/manager/transaksi',
   name: 'ManajemenTransaksi',
   component: () => import('@/views/manager/ManagerTransaksi.vue'),
